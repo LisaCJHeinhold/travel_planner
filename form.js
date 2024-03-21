@@ -6,7 +6,7 @@ import * as Print from 'expo-print'
 import * as FileSystem from 'expo-file-system';
 
 export default function FormPopup({ isVisible, onClose }) {
-
+  // set the initial state of the form values/inputs
   const [destination, setDestination] = useState('');
   const [budget, setBudget] = useState('');
   const [startDate, setStartDate] = useState(new Date());
@@ -17,6 +17,7 @@ export default function FormPopup({ isVisible, onClose }) {
   const [activities, setActivities] = useState(['']);
   const [transportation, setTransportation] = useState(['']);
 
+  // functions for setting each of the inputs to their respective state
   const addSubDestination = () => {
     setSubDestinations([...subDestinations, '']);
   };
@@ -37,6 +38,7 @@ export default function FormPopup({ isVisible, onClose }) {
     setTransportation([...transportation, '']);
   }
 
+  // functions for removing each of the inputs added if they are not needed
   const removeSubDestination = (index) => {
     const newSubDestinations = [...subDestinations];
     newSubDestinations.splice(index, 1);
@@ -67,6 +69,8 @@ export default function FormPopup({ isVisible, onClose }) {
     setTransportation(newTransportation);
   };
 
+
+  // functions for handling each of the inputs
   const handleSubDestinationChange = (text, index) => {
     const updatedSubDestinations = [...subDestinations];
     updatedSubDestinations[index] = text;
@@ -97,12 +101,14 @@ export default function FormPopup({ isVisible, onClose }) {
     setTransportation(updatedTransportation);
   };
 
+  // function for handling the form submission and creating the itinerary html and pdf
   const handleSubmit = async () => {
+    // ensures that required fields are not empty
     if (!destination.trim() || !startDate || !endDate) {
       alert('Please enter a destination and/or dates');
       return;
     }
-
+    // creates the itinerary html
     let htmlContent = `
     <!DOCTYPE html>
     <html lang="en">
@@ -171,6 +177,7 @@ export default function FormPopup({ isVisible, onClose }) {
     </html>
   `;
 
+  // creates the pdf
   try {
     const { uri } = await Print.printToFileAsync({ html: htmlContent });
     // Use Expo Filesystem or Expo Sharing to handle the file as needed
@@ -187,9 +194,13 @@ export default function FormPopup({ isVisible, onClose }) {
 
 
   return (
+    // form popup
     <Modal visible={isVisible} animationType="slide">
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Itinerary Form</Text>
+
+        {/* form inputs */}
+        {/* dates input using react-native-datetimepicker */}
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Dates:</Text>
           <View style={styles.datePickerContainer}>
@@ -218,6 +229,7 @@ export default function FormPopup({ isVisible, onClose }) {
           </View>
         </View>
         
+        {/* destination input */}
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Destination:</Text>
           <TextInput 
@@ -227,7 +239,8 @@ export default function FormPopup({ isVisible, onClose }) {
             onChangeText={setDestination}
           />
         </View>
-
+        
+        {/* budget input */}
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Budget:</Text>
           <TextInput 
@@ -239,7 +252,8 @@ export default function FormPopup({ isVisible, onClose }) {
         </View>
 
 
-
+        {/* sub destinations input */}
+        {/* allows for multiple sub destinations */}
         {subDestinations.map((subDestination, index) => (
           <View key={index} style={styles.inputContainer}>
             <Text style={styles.label}>Sub Destination {index + 1}:</Text>
@@ -249,16 +263,19 @@ export default function FormPopup({ isVisible, onClose }) {
               value={subDestination} 
               onChangeText={(text) => handleSubDestinationChange(text, index)}
             />
+            {/* remove sub destination button */}
             <TouchableOpacity style={styles.removeButton} onPress={() => removeSubDestination(index)}>
               <Text style={styles.removeButtonText}>Remove</Text>
             </TouchableOpacity>
           </View>
         ))}
-
+        {/* add sub destination button */}
         <TouchableOpacity style={styles.addButton} onPress={addSubDestination}>
           <Text style={styles.addButtonText}>Add Sub Destination</Text>
         </TouchableOpacity>
 
+        {/* flights input */}
+        {/* allows for multiple flights */}
         {flights.map((flight, index) => (
           <View key={index} style={styles.inputContainer}>
             <Text style={styles.label}>Flight {index + 1}:</Text>
@@ -268,6 +285,7 @@ export default function FormPopup({ isVisible, onClose }) {
               value={flight} 
               onChangeText={(text) => handleFlightChange(text, index)}
             />
+            {/* flights date picker */}
             <View style={styles.datePickerContainer}>
               <DateTimePicker
                 style={styles.datePicker}
@@ -292,16 +310,19 @@ export default function FormPopup({ isVisible, onClose }) {
                 }}
               />
             </View>
+            {/* remove flight button */}
             <TouchableOpacity style={styles.removeButton} onPress={() => removeFlight(index)}>
               <Text style={styles.removeButtonText}>Remove</Text>
             </TouchableOpacity>
           </View>
         ))}
-
+        {/* add flight button */}
         <TouchableOpacity style={styles.addButton} onPress={addFlight}>
           <Text style={styles.addButtonText}>Add Flight</Text>
         </TouchableOpacity>
-
+        
+        {/* Accommodations input */}
+        {/* allows for multiple Accommodations */}
         {accommodations.map((accommodation, index) => (
           <View key={index} style={styles.inputContainer}>
             <Text style={styles.label}>Accommodation {index + 1}:</Text>
@@ -311,16 +332,19 @@ export default function FormPopup({ isVisible, onClose }) {
               value={accommodation} 
               onChangeText={(text) => handleAccommodationChange(text, index)}
             />
+            {/* remove Accommodation button */}
             <TouchableOpacity style={styles.removeButton} onPress={() => removeAccommodation(index)}>
               <Text style={styles.removeButtonText}>Remove</Text>
             </TouchableOpacity>
           </View>
         ))}
-
+        {/* add Accommodation button */}
         <TouchableOpacity style={styles.addButton} onPress={addAccommodation}>
           <Text style={styles.addButtonText}>Add Accommodation</Text>
         </TouchableOpacity>
       
+        {/* Activities input */}
+        {/* allows for multiple Activities */}
         {activities.map((activity, index) => (
           <View key={index} style={styles.inputContainer}>
             <Text style={styles.label}>Activity {index + 1}:</Text>
@@ -330,16 +354,19 @@ export default function FormPopup({ isVisible, onClose }) {
               value={activity} 
               onChangeText={(text) => handleActivityChange(text, index)}
             />
+            {/* remove Activity button */}
             <TouchableOpacity style={styles.removeButton} onPress={() => removeActivity(index)}>
               <Text style={styles.removeButtonText}>Remove</Text>
             </TouchableOpacity>
           </View>
         ))}
-
+        {/* add Activity button */}
         <TouchableOpacity style={styles.addButton} onPress={addActivity}>
           <Text style={styles.addButtonText}>Add Activity</Text>
         </TouchableOpacity>
       
+        {/* Transportation input */}
+        {/* allows for multiple Transportation */}
         {transportation.map((transportation, index) => (
           <View key={index} style={styles.inputContainer}>
             <Text style={styles.label}>Transportation {index + 1}:</Text>
@@ -349,19 +376,22 @@ export default function FormPopup({ isVisible, onClose }) {
               value={transportation} 
               onChangeText={(text) => handleTransportationChange(text, index)}
             />
+            {/* remove Transportation button */}
             <TouchableOpacity style={styles.removeButton} onPress={() => removeTransportation(index)}>
               <Text style={styles.removeButtonText}>Remove</Text>
             </TouchableOpacity>
           </View>
         ))}
-
+        {/* add Transportation button */}
         <TouchableOpacity style={styles.addButton} onPress={addTransportation}>
           <Text style={styles.addButtonText}>Add Transportation</Text>
         </TouchableOpacity>
 
+        {/* submit button */}
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
           <Text style={styles.submitButtonText}>Submit</Text>
         </TouchableOpacity>
+        {/* close button */}
         <TouchableOpacity style={styles.closeButton} onPress={onClose}>
           <Text style={styles.closeButtonText}>Close</Text>
         </TouchableOpacity>
@@ -370,6 +400,7 @@ export default function FormPopup({ isVisible, onClose }) {
   );
 }
 
+// styles
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,

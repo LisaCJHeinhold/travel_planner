@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, ScrollView } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import colors from './colors';
-// import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import * as Print from 'expo-print'
 import * as FileSystem from 'expo-file-system';
 
